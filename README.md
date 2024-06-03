@@ -1,3 +1,11 @@
+# Functionalities
+
+- [ ] Authentication
+- [x] CRUD Task
+- [x] CRUD Category
+- [ ] Login
+- [ ] Registration
+
 # Turborepo starter
 
 This is an official starter Turborepo.

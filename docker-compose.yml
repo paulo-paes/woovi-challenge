@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_DATABASE: tasks
+    ports:
+      - 27017:27017
+    volumes:
+      - data-volume:/data/db
+
+
+volumes:
+  data-volume:
