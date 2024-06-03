@@ -8,6 +8,7 @@ import { CreateTaskInput, UpdateTaskInput, taskType } from './task-type';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 import { GlobalContext } from '../../schema/global-context';
 import { authValidator } from '../../auth/auth-validator';
+import { CategoryModel } from '../../category/mongoose-schema/category-mongoose-schema';
 
 export const createTask: GraphQLFieldConfig<
   void,
@@ -22,13 +23,26 @@ export const createTask: GraphQLFieldConfig<
     description: {
       type: new GraphQLNonNull(GraphQLString),
     },
+    categoryId: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
   },
   resolve: authValidator(
-    async (_: void, input: CreateTaskInput, context: GlobalContext) => {
+    async (_: void, args: CreateTaskInput, context: GlobalContext) => {
       const task = new TaskModel();
-      task.name = input.name;
-      task.description = input.description;
+      const category = await CategoryModel.findOne({
+        _id: args.categoryId,
+        user: context.user,
+      });
+
+      if (!category) {
+        throw new GraphQLError('category not found');
+      }
+
+      task.name = args.name;
+      task.description = args.description;
       task.user = context.user!;
+      task.category = category;
       await task.save();
       return task;
     },
@@ -53,16 +67,16 @@ export const updateTask: GraphQLFieldConfig<
     },
   },
   resolve: authValidator(
-    async (_: void, input: UpdateTaskInput, context: GlobalContext) => {
+    async (_: void, args: UpdateTaskInput, context: GlobalContext) => {
       const task = await TaskModel.findOne({
-        _id: input.id,
+        _id: args.id,
         user: context.user,
       });
 
       if (!task) throw new GraphQLError('Not found');
 
-      task.name = input.name;
-      task.description = input.description;
+      task.name = args.name;
+      task.description = args.description;
       await task.save();
       return task;
     },

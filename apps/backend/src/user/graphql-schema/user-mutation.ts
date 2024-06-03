@@ -1,4 +1,5 @@
 import {
+  GraphQLError,
   GraphQLField,
   GraphQLFieldConfig,
   GraphQLNonNull,
@@ -14,6 +15,8 @@ import {
 } from './user-type';
 import { comparePassword, hashPassword } from '../../utils/hasher';
 import { sign } from '../../utils/jwt-utils';
+import mongoose from 'mongoose';
+import { App } from '../../app';
 
 export const registerUser: GraphQLFieldConfig<void, any, RegisterUserInput> = {
   type: GraphQLString,
@@ -33,7 +36,19 @@ export const registerUser: GraphQLFieldConfig<void, any, RegisterUserInput> = {
     user.name = input.name;
     user.email = input.email;
     user.password = await hashPassword(input.password);
-    await user.save();
+    try {
+      await user.save();
+    } catch (error) {
+      App.log.error('failed to create user', error);
+      // code 11000 error for duplicate field
+      if (
+        error instanceof mongoose.mongo.MongoServerError &&
+        error.code === 11000
+      ) {
+        throw new GraphQLError('email already registered');
+      }
+      throw new GraphQLError('failed to create user');
+    }
     return 'OK';
   },
 };
