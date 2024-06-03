@@ -11,7 +11,7 @@ import { taskType } from './task-type';
 import { GlobalContext } from '../../schema/global-context';
 import { authValidator } from '../../auth/auth-validator';
 
-export const taskQuery: GraphQLFieldConfig<void, GlobalContext, void> = {
+export const tasks: GraphQLFieldConfig<void, GlobalContext, void> = {
   type: new GraphQLList(taskType),
   description: 'fetchs a list of tasks',
   resolve: authValidator(

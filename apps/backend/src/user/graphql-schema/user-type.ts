@@ -1,4 +1,9 @@
-import { GraphQLInputObjectType, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
+import { UserDocument } from '../mongoose-schema/user-mongoose-schema';
 
 export interface RegisterUserInput {
   name: string;
@@ -21,6 +26,16 @@ export const authPayload = new GraphQLObjectType<LoginOutput>({
     token: {
       type: new GraphQLNonNull(GraphQLString),
       resolve: (payload) => payload.token,
+    },
+  }),
+});
+
+export const meType = new GraphQLObjectType<UserDocument>({
+  name: 'Me',
+  fields: () => ({
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      resolve: (user) => user.name,
     },
   }),
 });
