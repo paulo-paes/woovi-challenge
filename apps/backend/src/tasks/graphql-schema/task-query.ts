@@ -3,7 +3,7 @@ import { App } from '../../app';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 import { taskType } from './task-type';
 
-export const taskQuery: GraphQLFieldConfig<any, any> = {
+export const taskQuery: GraphQLFieldConfig<void, any> = {
   type: new GraphQLNonNull(new GraphQLList(taskType)),
   description: 'fetchs a list of tasks',
   resolve: async () => {

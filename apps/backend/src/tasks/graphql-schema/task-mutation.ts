@@ -1,42 +1,44 @@
 import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql';
 import {
+  CreateTaskInput,
+  UpdateTaskInput,
   createTaskInputType,
   taskType,
   updateTaskInputType,
 } from './task-type';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 
-export const createTask: GraphQLFieldConfig<any, any> = {
+export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
   type: new GraphQLNonNull(taskType),
   args: {
     input: {
       type: new GraphQLNonNull(createTaskInputType),
     },
   },
-  resolve: async (a, { input }) => {
-    const doc = new TaskModel();
-    doc.name = input.name;
-    doc.description = input.description;
-    await doc.save();
+  resolve: async (_, { input }) => {
+    const task = new TaskModel();
+    task.name = input.name;
+    task.description = input.description;
+    await task.save();
     const ret = {
-      id: doc.id,
-      name: doc.name,
-      description: doc.description,
-      createdAt: doc.createdAt.toISOString(),
-      updatedAt: doc.updatedAt.toISOString(),
+      id: task.id,
+      name: task.name,
+      description: task.description,
+      createdAt: task.createdAt.toISOString(),
+      updatedAt: task.updatedAt.toISOString(),
     };
     return ret;
   },
 };
 
-export const updateTask: GraphQLFieldConfig<any, any> = {
+export const updateTask: GraphQLFieldConfig<void, any, UpdateTaskInput> = {
   type: new GraphQLNonNull(taskType),
   args: {
     input: {
       type: new GraphQLNonNull(updateTaskInputType),
     },
   },
-  resolve: async (a, { input }) => {
+  resolve: async (_, { input }) => {
     const doc = await TaskModel.findOne({
       _id: input.id,
     });
@@ -57,14 +59,14 @@ export const updateTask: GraphQLFieldConfig<any, any> = {
   },
 };
 
-export const deleteTask: GraphQLFieldConfig<any, any> = {
+export const deleteTask: GraphQLFieldConfig<void, any, { id: string }> = {
   type: GraphQLString,
   args: {
     id: {
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (a, { id }) => {
+  resolve: async (_, { id }) => {
     const doc = await TaskModel.findOne({
       _id: id,
     });

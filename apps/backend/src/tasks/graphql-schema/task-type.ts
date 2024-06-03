@@ -34,6 +34,13 @@ export const taskType = new GraphQLObjectType<TaskDocument>({
   }),
 });
 
+export interface CreateTaskInput {
+  input: {
+    name: string;
+    description: string;
+  }
+}
+
 export const createTaskInputType = new GraphQLInputObjectType({
   name: 'CreateTaskInput',
   fields: () => ({
@@ -45,6 +52,14 @@ export const createTaskInputType = new GraphQLInputObjectType({
     },
   }),
 });
+
+export interface UpdateTaskInput {
+  input: {
+    id: string;
+    name: string;
+    description: string;
+  }
+}
 
 export const updateTaskInputType = new GraphQLInputObjectType({
   name: 'UpdateTaskInput',

@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
+import { Document } from '../../utils/mongoose-utils';
 
-export interface TaskDocument extends mongoose.Document {
+export interface TaskDocument extends Document {
   name: string;
   description: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const taskSchema = new mongoose.Schema(
