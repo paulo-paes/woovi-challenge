@@ -1,7 +1,7 @@
 import { GraphQLFieldConfig } from 'graphql';
-import { GlobalContext } from '../../schema/global-context';
+import { GlobalContext } from '../../../schema/global-context';
 import { meType } from './user-type';
-import { authValidator } from '../../auth/auth-validator';
+import { authValidator } from '../../../auth/auth-validator';
 
 export const me: GraphQLFieldConfig<void, GlobalContext, void> = {
   type: meType,

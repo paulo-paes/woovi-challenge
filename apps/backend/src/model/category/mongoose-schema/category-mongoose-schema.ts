@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { Document } from '../../utils/mongoose-utils';
+import { Document } from '../../../utils/mongoose-utils';
 import { UserDocument } from '../../user/mongoose-schema/user-mongoose-schema';
 
 export interface CategoryDocument extends Document {

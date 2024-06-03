@@ -1,9 +1,9 @@
 import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 import { CategoryModel } from '../mongoose-schema/category-mongoose-schema';
-import { App } from '../../app';
+import { App } from '../../../app';
 import { categoryType } from './category-type';
-import { authValidator } from '../../auth/auth-validator';
-import { GlobalContext } from '../../schema/global-context';
+import { authValidator } from '../../../auth/auth-validator';
+import { GlobalContext } from '../../../schema/global-context';
 
 export const categories: GraphQLFieldConfig<void, GlobalContext> = {
   type: new GraphQLNonNull(new GraphQLList(categoryType)),

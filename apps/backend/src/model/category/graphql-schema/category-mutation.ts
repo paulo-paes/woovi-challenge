@@ -6,8 +6,8 @@ import {
 } from 'graphql';
 import { UpdateCategoryInput, categoryType } from './category-type';
 import { CategoryModel } from '../mongoose-schema/category-mongoose-schema';
-import { authValidator } from '../../auth/auth-validator';
-import { GlobalContext } from '../../schema/global-context';
+import { authValidator } from '../../../auth/auth-validator';
+import { GlobalContext } from '../../../schema/global-context';
 
 export const createCategory: GraphQLFieldConfig<
   void,

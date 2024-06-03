@@ -1,6 +1,6 @@
 import { Context, Next } from 'koa';
 import { verify } from '../utils/jwt-utils';
-import { UserModel } from '../user/mongoose-schema/user-mongoose-schema';
+import { UserModel } from '../model/user/mongoose-schema/user-mongoose-schema';
 
 export class AuthMiddleware {
   async handle(ctx: Context, next: Next) {

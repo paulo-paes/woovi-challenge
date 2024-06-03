@@ -1,4 +1,4 @@
-import { UserDocument } from '../user/mongoose-schema/user-mongoose-schema';
+import { UserDocument } from '../model/user/mongoose-schema/user-mongoose-schema';
 
 export interface GlobalContext {
   user?: UserDocument;

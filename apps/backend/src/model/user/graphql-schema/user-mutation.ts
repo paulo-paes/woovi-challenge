@@ -13,10 +13,10 @@ import {
   RegisterUserInput,
   authPayload,
 } from './user-type';
-import { comparePassword, hashPassword } from '../../utils/hasher';
-import { sign } from '../../utils/jwt-utils';
+import { comparePassword, hashPassword } from '../../../utils/hasher';
+import { sign } from '../../../utils/jwt-utils';
 import mongoose from 'mongoose';
-import { App } from '../../app';
+import { App } from '../../../app';
 
 export const registerUser: GraphQLFieldConfig<void, any, RegisterUserInput> = {
   type: GraphQLString,

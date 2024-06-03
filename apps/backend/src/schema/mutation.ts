@@ -3,9 +3,9 @@ import {
   createTask,
   deleteTask,
   updateTask,
-} from '../task/graphql-schema/task-mutation';
-import { createCategory } from '../category/graphql-schema/category-mutation';
-import { login, registerUser } from '../user/graphql-schema/user-mutation';
+} from '../model/task/graphql-schema/task-mutation';
+import { createCategory } from '../model/category/graphql-schema/category-mutation';
+import { login, registerUser } from '../model/user/graphql-schema/user-mutation';
 
 export const mutation = new GraphQLObjectType({
   name: 'Mutation',

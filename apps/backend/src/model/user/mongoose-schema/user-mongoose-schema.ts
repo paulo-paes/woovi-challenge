@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Document } from '../../utils/mongoose-utils';
+import { Document } from '../../../utils/mongoose-utils';
 
 export interface UserDocument extends Document {
   name: string;

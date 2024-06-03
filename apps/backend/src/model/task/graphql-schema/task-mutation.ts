@@ -6,8 +6,8 @@ import {
 } from 'graphql';
 import { CreateTaskInput, UpdateTaskInput, taskType } from './task-type';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
-import { GlobalContext } from '../../schema/global-context';
-import { authValidator } from '../../auth/auth-validator';
+import { GlobalContext } from '../../../schema/global-context';
+import { authValidator } from '../../../auth/auth-validator';
 import { CategoryModel } from '../../category/mongoose-schema/category-mongoose-schema';
 
 export const createTask: GraphQLFieldConfig<

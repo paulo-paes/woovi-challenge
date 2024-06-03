@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { Document } from '../../utils/mongoose-utils';
+import { Document } from '../../../utils/mongoose-utils';
 import { CategoryDocument } from '../../category/mongoose-schema/category-mongoose-schema';
 import { UserDocument } from '../../user/mongoose-schema/user-mongoose-schema';
 

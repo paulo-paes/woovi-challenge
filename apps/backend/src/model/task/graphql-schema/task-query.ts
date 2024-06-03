@@ -5,11 +5,11 @@ import {
   GraphQLString,
   GraphQLError,
 } from 'graphql';
-import { App } from '../../app';
+import { App } from '../../../app';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 import { taskType } from './task-type';
-import { GlobalContext } from '../../schema/global-context';
-import { authValidator } from '../../auth/auth-validator';
+import { GlobalContext } from '../../../schema/global-context';
+import { authValidator } from '../../../auth/auth-validator';
 
 export const tasks: GraphQLFieldConfig<void, GlobalContext, void> = {
   type: new GraphQLList(taskType),
