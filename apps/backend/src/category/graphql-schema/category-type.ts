@@ -15,12 +15,12 @@ export const categoryType = new GraphQLObjectType<CategoryDocument>({
     createdAt: {
       type: GraphQLString,
       description: 'created date in ISO format',
-      resolve: (category) => category.createdAt,
+      resolve: (category) => category.createdAt.toISOString(),
     },
     updatedAt: {
       type: GraphQLString,
       description: 'last updated date in ISO format',
-      resolve: (category) => category.updatedAt,
+      resolve: (category) => category.updatedAt.toISOString(),
     },
   }),
 });

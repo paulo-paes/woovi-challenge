@@ -20,14 +20,7 @@ export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
     task.name = input.name;
     task.description = input.description;
     await task.save();
-    const ret = {
-      id: task.id,
-      name: task.name,
-      description: task.description,
-      createdAt: task.createdAt.toISOString(),
-      updatedAt: task.updatedAt.toISOString(),
-    };
-    return ret;
+    return task;
   },
 };
 
@@ -39,23 +32,16 @@ export const updateTask: GraphQLFieldConfig<void, any, UpdateTaskInput> = {
     },
   },
   resolve: async (_, { input }) => {
-    const doc = await TaskModel.findOne({
+    const task = await TaskModel.findOne({
       _id: input.id,
     });
 
-    if (!doc) throw new Error('Not found');
+    if (!task) throw new Error('Not found');
 
-    doc.name = input.name;
-    doc.description = input.description;
-    await doc.save();
-    const ret = {
-      id: doc.id,
-      name: doc.name,
-      description: doc.description,
-      createdAt: doc.createdAt.toISOString(),
-      updatedAt: doc.updatedAt.toISOString(),
-    };
-    return ret;
+    task.name = input.name;
+    task.description = input.description;
+    await task.save();
+    return task;
   },
 };
 
@@ -67,14 +53,14 @@ export const deleteTask: GraphQLFieldConfig<void, any, { id: string }> = {
     },
   },
   resolve: async (_, { id }) => {
-    const doc = await TaskModel.findOne({
+    const task = await TaskModel.findOne({
       _id: id,
     });
 
-    if (!doc) throw new Error('Not found');
+    if (!task) throw new Error('Not found');
 
     await TaskModel.deleteOne({
-      _id: doc.id,
+      _id: task.id,
     });
 
     return id;

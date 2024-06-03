@@ -3,7 +3,7 @@ import {
   createTask,
   deleteTask,
   updateTask,
-} from '../tasks/graphql-schema/task-mutation';
+} from '../task/graphql-schema/task-mutation';
 import { createCategory } from '../category/graphql-schema/category-mutation';
 
 export const mutation = new GraphQLObjectType({

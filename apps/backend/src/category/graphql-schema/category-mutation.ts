@@ -13,12 +13,28 @@ export const createCategory: GraphQLFieldConfig<void, any, { name: string }> = {
     const category = new CategoryModel();
     category.name = name;
     await category.save();
-    const ret = {
-      id: category.id,
-      name: category.name,
-      createdAt: category.createdAt.toISOString(),
-      updatedAt: category.updatedAt.toISOString(),
-    };
-    return ret;
+    return category;
+  },
+};
+
+export const updateCategory: GraphQLFieldConfig<
+  void,
+  any,
+  { id: string; name: string }
+> = {
+  type: new GraphQLNonNull(categoryType),
+  args: {
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+  },
+  resolve: async (_, { id, name }) => {
+    const category = await CategoryModel.findById(id);
+
+    if (!category) throw new Error('Not found');
+
+    category.name = name;
+    await category.save();
+    return category;
   },
 };
