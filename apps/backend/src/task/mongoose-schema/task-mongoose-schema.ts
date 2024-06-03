@@ -17,7 +17,7 @@ const taskSchema = new mongoose.Schema(
     description: String,
     done: {
       type: Boolean,
-      default: false
+      default: false,
     },
     category: {
       type: Types.ObjectId,

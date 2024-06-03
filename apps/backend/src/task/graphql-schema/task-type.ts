@@ -73,4 +73,3 @@ export interface UpdateTaskInput {
   name: string;
   description: string;
 }
-

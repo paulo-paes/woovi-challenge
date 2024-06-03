@@ -7,6 +7,7 @@ import {
 import { CreateTaskInput, UpdateTaskInput, taskType } from './task-type';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 import { GlobalContext } from '../../schema/global-context';
+import { authValidator } from '../../auth/auth-validator';
 
 export const createTask: GraphQLFieldConfig<
   void,
@@ -22,13 +23,16 @@ export const createTask: GraphQLFieldConfig<
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, input, context) => {
-    const task = new TaskModel();
-    task.name = input.name;
-    task.description = input.description;
-    await task.save();
-    return task;
-  },
+  resolve: authValidator(
+    async (_: void, input: CreateTaskInput, context: GlobalContext) => {
+      const task = new TaskModel();
+      task.name = input.name;
+      task.description = input.description;
+      task.user = context.user!;
+      await task.save();
+      return task;
+    },
+  ),
 };
 
 export const updateTask: GraphQLFieldConfig<
@@ -48,18 +52,21 @@ export const updateTask: GraphQLFieldConfig<
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, input) => {
-    const task = await TaskModel.findOne({
-      _id: input.id,
-    });
+  resolve: authValidator(
+    async (_: void, input: UpdateTaskInput, context: GlobalContext) => {
+      const task = await TaskModel.findOne({
+        _id: input.id,
+        user: context.user,
+      });
 
-    if (!task) throw new Error('Not found');
+      if (!task) throw new GraphQLError('Not found');
 
-    task.name = input.name;
-    task.description = input.description;
-    await task.save();
-    return task;
-  },
+      task.name = input.name;
+      task.description = input.description;
+      await task.save();
+      return task;
+    },
+  ),
 };
 
 export const deleteTask: GraphQLFieldConfig<
@@ -73,25 +80,20 @@ export const deleteTask: GraphQLFieldConfig<
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, { id }, context) => {
-    if (!context.user) {
-      throw new GraphQLError('User not authenticated', {
-        extensions: {
-          code: 'UNAUTHENTICATED',
-          http: { status: 401 },
-        },
+  resolve: authValidator(
+    async (_: void, { id }: { id: string }, context: GlobalContext) => {
+      const task = await TaskModel.findOne({
+        _id: id,
+        user: context.user,
       });
-    }
-    const task = await TaskModel.findOne({
-      _id: id,
-    });
 
-    if (!task) throw new Error('Not found');
+      if (!task) throw new GraphQLError('Not found');
 
-    await TaskModel.deleteOne({
-      _id: task.id,
-    });
+      await TaskModel.deleteOne({
+        _id: task.id,
+      });
 
-    return id;
-  },
+      return id;
+    },
+  ),
 };

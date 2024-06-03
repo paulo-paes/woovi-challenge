@@ -1,40 +1,62 @@
-import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql';
-import { categoryType } from './category-type';
+import {
+  GraphQLError,
+  GraphQLFieldConfig,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
+import { UpdateCategoryInput, categoryType } from './category-type';
 import { CategoryModel } from '../mongoose-schema/category-mongoose-schema';
+import { authValidator } from '../../auth/auth-validator';
+import { GlobalContext } from '../../schema/global-context';
 
-export const createCategory: GraphQLFieldConfig<void, any, { name: string }> = {
+export const createCategory: GraphQLFieldConfig<
+  void,
+  GlobalContext,
+  { name: string }
+> = {
   type: new GraphQLNonNull(categoryType),
   args: {
     name: {
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, { name }) => {
-    const category = new CategoryModel();
-    category.name = name;
-    await category.save();
-    return category;
-  },
+  resolve: authValidator(
+    async (_: void, { name }: { name: string }, context: GlobalContext) => {
+      const category = new CategoryModel();
+      category.name = name;
+      category.user = context.user!;
+      await category.save();
+      return category;
+    },
+  ),
 };
 
 export const updateCategory: GraphQLFieldConfig<
   void,
-  any,
-  { id: string; name: string }
+  GlobalContext,
+  UpdateCategoryInput
 > = {
   type: new GraphQLNonNull(categoryType),
   args: {
     id: {
       type: new GraphQLNonNull(GraphQLString),
     },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
   },
-  resolve: async (_, { id, name }) => {
-    const category = await CategoryModel.findById(id);
+  resolve: authValidator(
+    async (_: void, input: UpdateCategoryInput, context: GlobalContext) => {
+      const category = await CategoryModel.findOne({
+        _id: input.id,
+        user: context.user,
+      });
 
-    if (!category) throw new Error('Not found');
+      if (!category) throw new GraphQLError('Not found');
 
-    category.name = name;
-    await category.save();
-    return category;
-  },
+      category.name = input.name;
+      await category.save();
+      return category;
+    },
+  ),
 };

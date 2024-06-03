@@ -1,6 +1,11 @@
 import { GraphQLObjectType, GraphQLString } from 'graphql';
 import { CategoryDocument } from '../mongoose-schema/category-mongoose-schema';
 
+export interface UpdateCategoryInput {
+  id: string;
+  name: string;
+}
+
 export const categoryType = new GraphQLObjectType<CategoryDocument>({
   name: 'Category',
   fields: () => ({
