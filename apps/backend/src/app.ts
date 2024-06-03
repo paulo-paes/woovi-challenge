@@ -5,15 +5,19 @@ import cors from '@koa/cors';
 import { routes } from './router';
 import winston, { Logger } from 'winston';
 import mongoose from 'mongoose';
+import { Server } from 'node:http'
 
 export class App {
   private port: number;
   private koa: Koa;
+  private _server: Server | undefined;
   private database!: mongoose.Mongoose;
   public static log: Logger;
 
   constructor() {
-    dotenv.config();
+    dotenv.config({
+      path: `.env.${process.env.NODE_ENV}`
+    });
     this.port = Number(process.env.PORT) || 8000;
     this.koa = new Koa();
     this.configLog();
@@ -44,9 +48,15 @@ export class App {
     this.koa.context.log = App.log;
   }
 
-  public start(): void {
-    this.koa.listen(this.port, () => {
+  public start() {
+    this._server = (this.koa.listen(this.port, () => {
       App.log.info(`Server running on port ${this.port}`);
-    });
+    }));
+
+    return this._server;
+  }
+
+  public async close() {
+    this._server?.close()
   }
 }
