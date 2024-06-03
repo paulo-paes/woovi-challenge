@@ -2,20 +2,21 @@ import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql';
 import {
   CreateTaskInput,
   UpdateTaskInput,
-  createTaskInputType,
   taskType,
-  updateTaskInputType,
 } from './task-type';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 
 export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
   type: new GraphQLNonNull(taskType),
   args: {
-    input: {
-      type: new GraphQLNonNull(createTaskInputType),
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    description: {
+      type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, { input }) => {
+  resolve: async (_, input) => {
     const task = new TaskModel();
     task.name = input.name;
     task.description = input.description;
@@ -27,11 +28,17 @@ export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
 export const updateTask: GraphQLFieldConfig<void, any, UpdateTaskInput> = {
   type: new GraphQLNonNull(taskType),
   args: {
-    input: {
-      type: new GraphQLNonNull(updateTaskInputType),
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    description: {
+      type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, { input }) => {
+  resolve: async (_, input) => {
     const task = await TaskModel.findOne({
       _id: input.id,
     });

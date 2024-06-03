@@ -1,4 +1,5 @@
 import {
+  GraphQLBoolean,
   GraphQLInputObjectType,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -9,8 +10,8 @@ import { categoryType } from '../../category/graphql-schema/category-type';
 import { CategoryModel } from '../../category/mongoose-schema/category-mongoose-schema';
 
 type TaskTypeInput = Omit<TaskDocument, 'category'> & {
-  category: string
-}
+  category: string;
+};
 
 export const taskType = new GraphQLObjectType<TaskTypeInput>({
   name: 'Task',
@@ -27,6 +28,10 @@ export const taskType = new GraphQLObjectType<TaskTypeInput>({
       type: new GraphQLNonNull(GraphQLString),
       resolve: (task) => task.description,
     },
+    done: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      resolve: (task) => task.done,
+    },
     createdAt: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'created date in ISO format',
@@ -40,17 +45,15 @@ export const taskType = new GraphQLObjectType<TaskTypeInput>({
     category: {
       type: new GraphQLNonNull(categoryType),
       resolve: async (task) => {
-        return CategoryModel.findById(task.category)
-      }
-    }
+        return CategoryModel.findById(task.category);
+      },
+    },
   }),
 });
 
 export interface CreateTaskInput {
-  input: {
-    name: string;
-    description: string;
-  }
+  name: string;
+  description: string;
 }
 
 export const createTaskInputType = new GraphQLInputObjectType({
@@ -66,24 +69,8 @@ export const createTaskInputType = new GraphQLInputObjectType({
 });
 
 export interface UpdateTaskInput {
-  input: {
-    id: string;
-    name: string;
-    description: string;
-  }
+  id: string;
+  name: string;
+  description: string;
 }
 
-export const updateTaskInputType = new GraphQLInputObjectType({
-  name: 'UpdateTaskInput',
-  fields: () => ({
-    id: {
-      type: new GraphQLNonNull(GraphQLString),
-    },
-    name: {
-      type: new GraphQLNonNull(GraphQLString),
-    },
-    description: {
-      type: new GraphQLNonNull(GraphQLString),
-    },
-  }),
-});
