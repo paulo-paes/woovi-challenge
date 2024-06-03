@@ -1,12 +1,18 @@
-import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql';
 import {
-  CreateTaskInput,
-  UpdateTaskInput,
-  taskType,
-} from './task-type';
+  GraphQLError,
+  GraphQLFieldConfig,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
+import { CreateTaskInput, UpdateTaskInput, taskType } from './task-type';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
+import { GlobalContext } from '../../schema/global-context';
 
-export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
+export const createTask: GraphQLFieldConfig<
+  void,
+  GlobalContext,
+  CreateTaskInput
+> = {
   type: new GraphQLNonNull(taskType),
   args: {
     name: {
@@ -16,7 +22,7 @@ export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, input) => {
+  resolve: async (_, input, context) => {
     const task = new TaskModel();
     task.name = input.name;
     task.description = input.description;
@@ -25,7 +31,11 @@ export const createTask: GraphQLFieldConfig<void, any, CreateTaskInput> = {
   },
 };
 
-export const updateTask: GraphQLFieldConfig<void, any, UpdateTaskInput> = {
+export const updateTask: GraphQLFieldConfig<
+  void,
+  GlobalContext,
+  UpdateTaskInput
+> = {
   type: new GraphQLNonNull(taskType),
   args: {
     id: {
@@ -52,14 +62,26 @@ export const updateTask: GraphQLFieldConfig<void, any, UpdateTaskInput> = {
   },
 };
 
-export const deleteTask: GraphQLFieldConfig<void, any, { id: string }> = {
+export const deleteTask: GraphQLFieldConfig<
+  void,
+  GlobalContext,
+  { id: string }
+> = {
   type: GraphQLString,
   args: {
     id: {
       type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: async (_, { id }) => {
+  resolve: async (_, { id }, context) => {
+    if (!context.user) {
+      throw new GraphQLError('User not authenticated', {
+        extensions: {
+          code: 'UNAUTHENTICATED',
+          http: { status: 401 },
+        },
+      });
+    }
     const task = await TaskModel.findOne({
       _id: id,
     });

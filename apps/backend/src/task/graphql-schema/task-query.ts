@@ -3,16 +3,21 @@ import {
   GraphQLNonNull,
   GraphQLFieldConfig,
   GraphQLString,
+  GraphQLError,
 } from 'graphql';
 import { App } from '../../app';
 import { TaskModel } from '../mongoose-schema/task-mongoose-schema';
 import { taskType } from './task-type';
+import { GlobalContext } from '../../schema/global-context';
 
-export const taskQuery: GraphQLFieldConfig<void, any> = {
+export const taskQuery: GraphQLFieldConfig<void, GlobalContext, void> = {
   type: new GraphQLNonNull(new GraphQLList(taskType)),
   description: 'fetchs a list of tasks',
-  resolve: async () => {
-    const tasks = await TaskModel.find();
+  resolve: async (source, args, context) => {
+    if (!context.user) {
+      throw new GraphQLError('User not authenticated');
+    }
+    const tasks = await TaskModel.find({ user: context.user.id });
     App.log.debug('tasks fetched ' + tasks);
     return tasks;
   },

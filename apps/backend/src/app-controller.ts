@@ -5,8 +5,9 @@ import {
   sendResult,
   shouldRenderGraphiQL,
 } from 'graphql-helix';
-import { Context } from 'koa';
 import { schema } from './schema/schema';
+import { Context } from 'koa';
+import { GlobalContext } from './schema/global-context';
 
 export class AppController {
   public async handle(ctx: Context) {
@@ -24,12 +25,13 @@ export class AppController {
     } else {
       const { operationName, query, variables } = getGraphQLParameters(request);
 
-      const result = await processRequest({
+      const result = await processRequest<GlobalContext>({
         operationName,
         query,
         variables,
         request,
         schema,
+        contextFactory: () => ({ user: ctx.user }),
       });
 
       sendResult(result, ctx.res);
