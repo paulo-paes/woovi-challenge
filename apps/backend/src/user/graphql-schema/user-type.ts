@@ -1,4 +1,4 @@
-import { GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import { GraphQLInputObjectType, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
 export interface RegisterUserInput {
   name: string;
@@ -15,3 +15,12 @@ export interface LoginOutput {
   token: string;
 }
 
+export const authPayload = new GraphQLObjectType<LoginOutput>({
+  name: 'AuthPayload',
+  fields: () => ({
+    token: {
+      type: new GraphQLNonNull(GraphQLString),
+      resolve: (payload) => payload.token,
+    },
+  }),
+});
